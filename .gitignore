@@ -1,0 +1,7 @@
+.idea/
+.gradle/
+/build
+build-cache.lock
+build-cache/
+local.properties
+/*.iml
