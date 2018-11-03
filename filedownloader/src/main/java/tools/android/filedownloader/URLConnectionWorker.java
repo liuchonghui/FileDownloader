@@ -38,6 +38,7 @@ public class URLConnectionWorker implements DownloadWorker, FileDownloadImpl {
 
     @Override
     public void run() {
+        Log.d(FileDownloadManager.TAG, getFileName() + " is start to down");
         notifyDownloadStart(url);
         boolean success = false;
         String savePath = null;

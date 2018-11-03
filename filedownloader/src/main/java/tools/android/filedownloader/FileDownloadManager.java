@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class FileDownloadManager implements FileDownloadImpl {
 
-    private static String TAG = "FDM";
+    protected static String TAG = "FDM";
     private static FileDownloadManager instance;
     private Handler mHandler;
     private ExecutorService downloadExecutor = null;
@@ -59,7 +59,7 @@ public class FileDownloadManager implements FileDownloadImpl {
             if (ls == null) {
                 ls = new ArrayList();
             }
-            Log.d(TAG, "PluginDownloadManager add task:" + l.hashCode() + "|" + l.getReleaseCode() + "|" + identify);
+            Log.d(TAG, "FileDownloadManager add task:" + l.hashCode() + "|" + l.getReleaseCode() + "|" + identify);
             ls.add(l);
             pair.put(url, ls);
             DownloadWorker worker = createFileDownloadWorker(url,
@@ -67,8 +67,9 @@ public class FileDownloadManager implements FileDownloadImpl {
             if (downloadExecutor == null) {
                 downloadExecutor = Executors.newFixedThreadPool(2, new ThreadFactory() {
                     @Override
-                    public Thread newThread(Runnable r) {
-                        Thread thread = new Thread();
+                    public Thread newThread(Runnable runnable) {
+                        Thread thread = new Thread(runnable,
+                                "FDM download-worker");
                         thread.setPriority(Thread.MAX_PRIORITY - 1);
                         return thread;
                     }
@@ -78,7 +79,7 @@ public class FileDownloadManager implements FileDownloadImpl {
             downloadExecutor.submit(worker);
 
         } else {
-            Log.d(TAG, "PluginDownloadManager add task+" + l.hashCode() + "|" + l.getReleaseCode() + "|" + identify);
+            Log.d(TAG, "FileDownloadManager add task+" + l.hashCode() + "|" + l.getReleaseCode() + "|" + identify);
             ls.add(l);
             pair.put(url, ls);
             Log.d(TAG, "ls size|" + ls.size());
@@ -186,7 +187,7 @@ public class FileDownloadManager implements FileDownloadImpl {
                             l.onDownloadClear(success, url, path);
                             Log.d(TAG, "download complete ls size:" + ls.size());
                             l.onDownloadClear(success, url, path);
-                            Log.d(TAG, "PluginDownloadManager runned task " + l.hashCode() + "|" + l.getReleaseCode());
+                            Log.d(TAG, "FileDownloadManager runned task " + l.hashCode() + "|" + l.getReleaseCode());
                         } catch (Throwable t) {
                             t.printStackTrace();
                         }

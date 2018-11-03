@@ -1,4 +1,4 @@
-package tool.retryrequest.app;
+package tool.filedownloader.app;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,9 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import tools.android.retryrequest.GsonUtil;
-import tools.android.retryrequest.Result;
-import tools.android.retryrequest.RetryRequest;
+import tools.android.filedownloader.DownloadAdatper;
+import tools.android.filedownloader.FileDownloadManager;
 
 public class MainActivity extends Activity {
 
@@ -39,23 +38,30 @@ public class MainActivity extends Activity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                String url = "http://api.kuai.mvideo.xiaomi.com/api/cp/1/fstoken";
-                url = "https://api.kuai.mvideo.xiaomi.com/api/video/2?noop=1&vid=j-ylCRwAVtcKLX1jUcNjUiQhkMwu0u8=";
-                RetryRequest.get()
-                        .setEnableLogcat(true)
-                        .setLogtag("PPP")
-                        .setDelayMillis(333L)
-                        .request(url, new Result<FsToken>() {
+                FileDownloadManager.get().downloadFile(view.getContext(),
+                        "cp.pptv.plugin", "apk", "db9357c67b82f2da0afc1e540549296c",
+                        "https://gist.github.com/liuchonghui/b9757b65748eb42548213ec7b9572116/raw/c52b33e0768e6b2f3e0732ec0f4ac9759e4e366d/1.6_25.pptv.db9357c67b82f2da0afc1e540549296c.zip",
+                        new DownloadAdatper() {
                             @Override
-                            public void onSuccess(FsToken fsToken) {
-                                Log.d("PPP", "RetryRequest|onSuccess|" + GsonUtil.toJson(fsToken));
+                            public void onDownloadStart(String url) {
+                                Log.d("PPP", "onDownloadStart|" + url);
                             }
 
                             @Override
-                            public void onFailure(int code) {
-                                Log.d("PPP", "RetryRequest|onFailure|" + code);
+                            public void onDownloadSuccess(String url, String path) {
+                                Log.d("PPP", "onDownloadSuccess|" + url + "|" + path);
                             }
-                        }, FsToken.class);
+
+                            @Override
+                            public void onDownloadFailure(String url, String message) {
+                                Log.d("PPP", "onDownloadFailure|" + message);
+                            }
+
+                            @Override
+                            public void onDownloadClear(boolean success, String url, String path) {
+                                Log.d("PPP", "onDownloadClear|" + success);
+                            }
+                        });
             }
         });
 
